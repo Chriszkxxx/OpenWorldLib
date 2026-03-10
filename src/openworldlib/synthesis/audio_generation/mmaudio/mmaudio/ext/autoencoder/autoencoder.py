@@ -27,9 +27,8 @@ class AutoEncoderModule(nn.Module):
             assert vocoder_ckpt_path is not None
             self.vocoder = BigVGAN(vocoder_ckpt_path).eval()
         elif mode == '44k':
-            # self.vocoder = BigVGANv2.from_pretrained('nvidia/bigvgan_v2_44khz_128band_512x',
-            #                                          use_cuda_kernel=False)
-            self.vocoder = BigVGANv2.from_pretrained('/data0/hdl/openworldlib/SceneFlow/ext_weights/bigvgan_v2_44khz_128band_512x',use_cuda_kernel=False)
+            self.vocoder = BigVGANv2.from_pretrained('nvidia/bigvgan_v2_44khz_128band_512x',
+                                                     use_cuda_kernel=False)
             self.vocoder.remove_weight_norm()
         else:
             raise ValueError(f'Unknown mode: {mode}')

@@ -1,5 +1,5 @@
 import sys
-from openworldlib.pipelines.thinksound.pipeline_thinksound import ThinkSoundPipeline, ThinkSoundArgs
+from openworldlib.pipelines.thinksound.pipeline_thinksound import ThinkSoundPipeline
 import torchaudio
 from pathlib import Path
 from loguru import logger
@@ -21,7 +21,9 @@ title = "play guitar"
 description = "A man is playing guitar gently"
 pretrained_model_path = "FunAudioLLM/ThinkSound"
 
-args = ThinkSoundArgs(
+pipeline = ThinkSoundPipeline.from_pretrained(
+    synthesis_model_path=pretrained_model_path,
+    model_config="src/openworldlib/synthesis/audio_generation/thinksound/ThinkSound/ThinkSound/configs/model_configs/thinksound.json",
     duration_sec=3.0,
     seed=42,
     compile=False,
@@ -29,12 +31,6 @@ args = ThinkSoundArgs(
     cot_dir="cot_coarse",
     results_dir="results",
     scripts_dir=".",
-)
-
-
-pipeline = ThinkSoundPipeline.from_pretrained(
-    synthesis_model_path=pretrained_model_path,
-    synthesis_args=args,
     device=None,  # 自动检测设备
 )
 

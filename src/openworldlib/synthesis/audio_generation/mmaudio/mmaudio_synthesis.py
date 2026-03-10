@@ -20,7 +20,8 @@ torch.backends.cudnn.allow_tf32 = True
 
 log = logging.getLogger()
 
-def load_models(args, pretrained_model_path, device, logger_obj):
+def load_models(variant: str, full_precision: bool, num_steps: int,
+                pretrained_model_path, device, logger_obj):
     """
     加载 MMAudio 模型
     
@@ -37,7 +38,7 @@ def load_models(args, pretrained_model_path, device, logger_obj):
         model: ModelConfig 实例
     """
     if logger_obj:
-        logger_obj.info(f"Loading MMAudio model variant: {args.variant}")
+        logger_obj.info(f"Loading MMAudio model variant: {variant}")
     
 
     if os.path.isdir(pretrained_model_path):
@@ -55,13 +56,13 @@ def load_models(args, pretrained_model_path, device, logger_obj):
         )
     
     # 基于 model_root 解析出当前使用的 ModelConfig，使所有权重路径都在 model_root 下
-    base_model: ModelConfig = all_model_cfg[args.variant]
+    base_model: ModelConfig = all_model_cfg[variant]
     model: ModelConfig = base_model.with_root(model_root)
     
     # 序列配置只依赖于模式，不依赖具体路径
     seq_cfg = model.seq_cfg
 
-    dtype = torch.float32 if args.full_precision else torch.bfloat16
+    dtype = torch.float32 if full_precision else torch.bfloat16
     
     if logger_obj:
         logger_obj.info(f"Loading network: {model.model_name} on {device} with dtype {dtype}")
@@ -81,7 +82,7 @@ def load_models(args, pretrained_model_path, device, logger_obj):
         need_vae_encoder=False
     ).to(device, dtype).eval()
 
-    fm = FlowMatching(min_sigma=0, inference_mode='euler', num_steps=args.num_steps)
+    fm = FlowMatching(min_sigma=0, inference_mode='euler', num_steps=num_steps)
 
     if logger_obj:
         logger_obj.info(f"Successfully loaded MMAudio model from {model.model_path}")
@@ -93,12 +94,15 @@ class MMAudioSynthesis(BaseSynthesis):
     """
     MMAudio 生成合成类，提供统一的接口用于音频生成
     """
-    def __init__(self, args, net, feature_utils, fm, seq_cfg, model_config, device, logger_obj):
+    def __init__(self, variant: str, full_precision: bool, num_steps: int,
+                 net, feature_utils, fm, seq_cfg, model_config, device, logger_obj):
         """
         初始化 MMAudioSynthesis
         
         Args:
-            args: 配置参数
+            variant: 模型变体名称
+            full_precision: 是否使用全精度（float32）
+            num_steps: FlowMatching 推理步数
             net: MMAudio 主网络
             feature_utils: 特征工具
             fm: FlowMatching 实例
@@ -107,7 +111,9 @@ class MMAudioSynthesis(BaseSynthesis):
             device: 设备
             logger_obj: 日志记录器
         """
-        self.args = args
+        self.variant = variant
+        self.full_precision = full_precision
+        self.num_steps = num_steps
         self.device = device
         self.logger = logger_obj
         self.net = net
@@ -123,13 +129,24 @@ class MMAudioSynthesis(BaseSynthesis):
             self.logger.info("MMAudioSynthesis initialized successfully")
         
     @classmethod
-    def from_pretrained(cls, pretrained_model_path, args, device=None, logger_obj=None, **kwargs):
+    def from_pretrained(
+        cls,
+        pretrained_model_path,
+        variant: str = "large_44k_v2",
+        full_precision: bool = False,
+        num_steps: int = 25,
+        device=None,
+        logger_obj=None,
+        **kwargs,
+    ):
         """
         从预训练模型路径加载 MMAudioSynthesis
         
         Args:
             pretrained_model_path: 预训练模型路径，可以是本地路径或者hugid路径
-            args: 配置参数，包含 variant 等
+            variant: 模型变体名称
+            full_precision: 是否使用全精度（float32）
+            num_steps: FlowMatching 推理步数
             device: 设备，默认为 None（自动检测）
             logger_obj: 日志记录器，默认为 None
             **kwargs: 额外参数
@@ -153,10 +170,19 @@ class MMAudioSynthesis(BaseSynthesis):
         torch.set_grad_enabled(False)
         
         # 加载模型组件
-        net, feature_utils, fm, seq_cfg, model_config = load_models(args, pretrained_model_path, device, logger_inst)
+        net, feature_utils, fm, seq_cfg, model_config = load_models(
+            variant=variant,
+            full_precision=full_precision,
+            num_steps=num_steps,
+            pretrained_model_path=pretrained_model_path,
+            device=device,
+            logger_obj=logger_inst,
+        )
         
         return cls(
-            args=args,
+            variant=variant,
+            full_precision=full_precision,
+            num_steps=num_steps,
             net=net,
             feature_utils=feature_utils,
             fm=fm,

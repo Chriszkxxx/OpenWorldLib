@@ -46,9 +46,8 @@ class FeaturesUtils(nn.Module):
         super().__init__()
 
         if enable_conditions:
-            # self.clip_model = create_model_from_pretrained('hf-hub:apple/DFN5B-CLIP-ViT-H-14-384',
-            #                                                return_transform=False)
-            self.clip_model = create_model_from_pretrained('ViT-H-14-378', pretrained='/data0/hdl/sceneflow/SceneFlow/ext_weights/open_clip_pytorch_model.bin',return_transform=False)
+            self.clip_model = create_model_from_pretrained('hf-hub:apple/DFN5B-CLIP-ViT-H-14-384',
+                                                           return_transform=False)
             self.clip_preprocess = Normalize(mean=[0.48145466, 0.4578275, 0.40821073],
                                              std=[0.26862954, 0.26130258, 0.27577711])
             self.clip_model = patch_clip(self.clip_model)

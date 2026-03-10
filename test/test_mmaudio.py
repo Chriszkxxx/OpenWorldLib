@@ -1,5 +1,5 @@
 import sys
-from openworldlib.pipelines.mmaudio.pipeline_mmaudio import MMAudioPipeline, MMAudioArgs
+from openworldlib.pipelines.mmaudio.pipeline_mmaudio import MMAudioPipeline
 from openworldlib.synthesis.audio_generation.mmaudio.mmaudio.eval_utils import make_video
 from pathlib import Path
 import torchaudio
@@ -27,18 +27,11 @@ video_path = "./data/test_case1/test_video.mp4"
 test_prompt = "A man plays guitar."
 pretrained_model_path = "hkchengrex/MMAudio" # 可以提供本地路径或者hugid路径
 
-args = MMAudioArgs(
-    variant='large_44k_v2', # 可选: 'small_16k', 'small_44k', 'medium_44k', 'large_44k', 'large_44k_v2'
-    full_precision=False,
-    num_steps=25,
-    duration=8.0,
-    cfg_strength=4.5,
-    seed=42,
-)
-
 pipeline = MMAudioPipeline.from_pretrained(
     pretrained_model_path=pretrained_model_path,
-    synthesis_args=args,
+    variant='large_44k_v2',  # 可选: 'small_16k', 'small_44k', 'medium_44k', 'large_44k', 'large_44k_v2'
+    full_precision=False,
+    num_steps=25,
     device='cuda',  # 可以填写None则进入自动检测设备（cuda/mps/cpu），如果填写了则使用填写的设备
 )
 
