@@ -234,7 +234,7 @@ In this document, we list the installation requirements and installation scripts
     <td align="center">3.9</td>
     <td align="center"> </td>
     <td> </td>
-    <td>Pending</td>
+    <td><code>bash scripts/setup/ai2thor_install.sh</code></td>
   </tr>
   <tr>
     <td colspan="5" align="center"><b>🎵 Audio Generation</b></td>
