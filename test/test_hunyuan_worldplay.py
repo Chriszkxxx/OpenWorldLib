@@ -3,7 +3,7 @@ from openworldlib.pipelines.hunyuan_world.pipeline_hunyuan_worldplay import Huny
 
 image_path = "./data/test_case/test_image_seq_case1/image_0001.jpg"
 prompt = "A paved pathway leads towards a stone arch bridge spanning a calm body of water."
-interaction_signal = "w-10, right-10, d-11"
+interaction_signal = ["forward", "camera_l", "camera_r"]
 model_path = "tencent/HunyuanVideo-1.5"
 action_ckpt = "tencent/HY-WorldPlay"
 
