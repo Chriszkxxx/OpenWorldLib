@@ -1,13 +1,10 @@
 from typing import List, Optional, Sequence, Union
+from PIL import Image as PILImage
 
 from ...reasoning.spatial_reasoning.spatial_reasoner.spatial_reasoner_reasoning import (
     SpatialReasonerReasoning,
 )
 from ...operators.spatial_reasoner_operator import SpatialReasonerOperator
-
-
-ImageLike = Union[str, bytes]
-VideoLike = Union[str, bytes]
 
 
 class SpatialReasonerPipeline:
@@ -22,11 +19,24 @@ class SpatialReasonerPipeline:
     @classmethod
     def from_pretrained(
         cls,
-        pretrained_model_path: str = "ccvl/SpatialReasoner",
+        model_path: str = "ccvl/SpatialReasoner",
+        device: Optional[Union[str, "torch.device"]] = None,
+        weight_dtype: "torch.dtype" = None,
         **kwargs,
     ) -> "SpatialReasonerPipeline":
+        """
+        Args:
+            model_path: HuggingFace model ID 或本地模型路径。
+            device: 模型加载到的设备（如 "cuda", "cpu"）。
+            weight_dtype: 模型权重数据类型（如 torch.bfloat16, torch.float16）。
+        """
+        import torch
+        if weight_dtype is None:
+            weight_dtype = torch.bfloat16
         reasoning = SpatialReasonerReasoning.from_pretrained(
-            pretrained_model_path=pretrained_model_path,
+            model_path=model_path,
+            device=device,
+            weight_dtype=weight_dtype,
             **kwargs,
         )
         operator = SpatialReasonerOperator.from_pretrained()
@@ -34,29 +44,33 @@ class SpatialReasonerPipeline:
 
     def _build_messages(
         self,
-        image_paths: Optional[Union[ImageLike, Sequence[ImageLike]]],
-        video_paths: Optional[Union[VideoLike, Sequence[VideoLike]]],
+        image_inputs: Optional[Union[str, PILImage.Image, Sequence[Union[str, PILImage.Image]]]],
+        video_inputs: Optional[Union[str, List[PILImage.Image], Sequence[Union[str, List[PILImage.Image]]]]],
         instruction: str,
     ):
-        if image_paths is None:
-            image_paths = []
-        if video_paths is None:
-            video_paths = []
-        if isinstance(image_paths, (str, bytes)):
-            image_paths = [image_paths]
-        if isinstance(video_paths, (str, bytes)):
-            video_paths = [video_paths]
+        if image_inputs is None:
+            image_inputs = []
+        if video_inputs is None:
+            video_inputs = []
+        # 单个 image：str 或 PIL.Image → 包装成 list
+        if isinstance(image_inputs, (str, PILImage.Image)):
+            image_inputs = [image_inputs]
+        # 单个 video：str → 包装成 list；list[PIL.Image] 视为单个视频帧序列 → 包装成 [frames]
+        if isinstance(video_inputs, str):
+            video_inputs = [video_inputs]
+        elif isinstance(video_inputs, list) and len(video_inputs) > 0 and isinstance(video_inputs[0], PILImage.Image):
+            video_inputs = [video_inputs]
 
-        content = [{"type": "image", "image": path} for path in image_paths]
-        content += [{"type": "video", "video": path} for path in video_paths]
+        content = [{"type": "image", "image": img} for img in image_inputs]
+        content += [{"type": "video", "video": vid} for vid in video_inputs]
         content.append({"type": "text", "text": instruction})
         return [{"role": "user", "content": content}]
 
     def __call__(
         self,
         instruction: str,
-        image_paths: Optional[Union[ImageLike, Sequence[ImageLike]]] = None,
-        video_paths: Optional[Union[VideoLike, Sequence[VideoLike]]] = None,
+        image_inputs: Optional[Union[str, PILImage.Image, Sequence[Union[str, PILImage.Image]]]] = None,
+        video_inputs: Optional[Union[str, List[PILImage.Image], Sequence[Union[str, List[PILImage.Image]]]]] = None,
         max_new_tokens: int = 2048,
         messages: Optional[list] = None,
         generation_kwargs: Optional[dict] = None,
@@ -67,8 +81,8 @@ class SpatialReasonerPipeline:
         if messages is None:
             batched_messages = [
                 self._build_messages(
-                    image_paths=image_paths,
-                    video_paths=video_paths,
+                    image_inputs=image_inputs,
+                    video_inputs=video_inputs,
                     instruction=instruction,
                 )
             ]
