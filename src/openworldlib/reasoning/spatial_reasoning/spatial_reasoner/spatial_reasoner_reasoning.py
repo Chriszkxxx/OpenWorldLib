@@ -36,8 +36,8 @@ class SpatialReasonerReasoning(BaseReasoning):
 
         Args:
             model_path: HuggingFace model ID or local path to the model.
-            device: 模型加载到的目标设备（如 "cuda", "cuda:0", "cpu"），默认 "cuda"。
-            weight_dtype: 模型权重数据类型（如 torch.bfloat16, torch.float16）。
+            device: Target device to load the model onto (e.g. "cuda", "cuda:0", "cpu"). Defaults to "cuda".
+            weight_dtype: Weight dtype for the model (e.g. torch.bfloat16, torch.float16). Defaults to torch.bfloat16.
             attn_implementation: Attention implementation override.
         """
         model = Qwen2_5_VLForConditionalGeneration.from_pretrained(

@@ -27,9 +27,9 @@ class SpatialLadderPipeline:
     ) -> "SpatialLadderPipeline":
         """
         Args:
-            model_path: HuggingFace model ID 或本地模型路径。
-            device: 模型加载到的设备（如 "cuda", "cpu"）。
-            weight_dtype: 模型权重数据类型（如 torch.bfloat16, torch.float16）。
+            model_path: HuggingFace model ID or local path to the model.
+            device: Target device to load all models onto (e.g. "cuda", "cpu").
+            weight_dtype: Weight dtype for the model (e.g. torch.bfloat16, torch.float16).
         """
         import torch
         if weight_dtype is None:
@@ -53,10 +53,11 @@ class SpatialLadderPipeline:
             image_inputs = []
         if video_inputs is None:
             video_inputs = []
-        # 单个 image：str 或 PIL.Image → 包装成 list
+        # Wrap a single image (str or PIL.Image) into a list
         if isinstance(image_inputs, (str, PILImage.Image)):
             image_inputs = [image_inputs]
-        # 单个 video：str → 包装成 list；list[PIL.Image] 视为单个视频帧序列 → 包装成 [frames]
+        # Wrap a single video path (str) into a list;
+        # a list[PIL.Image] is treated as the frame sequence of one video
         if isinstance(video_inputs, str):
             video_inputs = [video_inputs]
         elif isinstance(video_inputs, list) and len(video_inputs) > 0 and isinstance(video_inputs[0], PILImage.Image):

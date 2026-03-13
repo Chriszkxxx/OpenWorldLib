@@ -12,7 +12,7 @@ VIDEO_PATH = "./data/test_video_case1/talking_man.mp4"
 
 
 def load_video_frames(video_path: str, max_frames: int = 8):
-    """用 cv2 从视频文件中均匀抽取帧，返回 list[PIL.Image]。"""
+    """Uniformly sample frames from a video file and return them as a list of PIL.Image."""
     import cv2
     cap = cv2.VideoCapture(video_path)
     total = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
@@ -28,7 +28,7 @@ def load_video_frames(video_path: str, max_frames: int = 8):
 
 
 def test_spatial_reasoner_pipeline_pil_image():
-    """使用 PIL.Image 作为图像输入。"""
+    """Test image inference using a PIL.Image as input."""
     pipe = SpatialReasonerPipeline.from_pretrained(
         model_path=MODEL_PATH,
         device=DEVICE,
@@ -46,7 +46,7 @@ def test_spatial_reasoner_pipeline_pil_image():
 
 
 def test_spatial_reasoner_pipeline_pil_video():
-    """使用 list[PIL.Image] 作为视频输入（均匀抽帧）。"""
+    """Test video inference using a list of PIL.Image frames as input."""
     pipe = SpatialReasonerPipeline.from_pretrained(
         model_path=MODEL_PATH,
         device=DEVICE,
