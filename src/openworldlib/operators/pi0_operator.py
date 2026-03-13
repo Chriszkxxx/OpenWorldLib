@@ -655,8 +655,10 @@ class PI0Operator(BaseOperator):
         # 2. Normalize state
         state = self.state_normalize_transform(state)
 
-        # 3. Process images
+        # 3. Process images, then move to device
         images, img_masks = self.image_transform(images)
+        images = [img.to(self.device) for img in images]
+        img_masks = [mask.to(self.device) for mask in img_masks]
 
         # 4. Pad state
         if pad_state:
