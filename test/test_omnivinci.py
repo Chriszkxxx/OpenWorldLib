@@ -12,7 +12,7 @@ model_path = "nvidia/omnivinci"
 prompt = "Describe this image"
 
 # Process image
-image_path = "./data/test_case1/ref_image.png"
+image_path = "./data/test_case/test_image_case1/ref_image.png"
 images = Image.open(image_path)
 if images.mode == 'RGBA':
     background = Image.new('RGB', images.size, (0, 0, 0))

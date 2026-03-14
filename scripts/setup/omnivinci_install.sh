@@ -4,6 +4,7 @@
 # Usage: bash scripts/setup/omnivinci_install.sh
 
 echo "=== [1/4] Installing core model dependencies ==="
+pip install torch==2.5.1 torchvision torchaudio
 pip install bitsandbytes==0.43.2 einops-exts==0.0.4
 
 echo "=== [2/4] Installing vision and video dependencies ==="
