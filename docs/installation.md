@@ -41,10 +41,10 @@ In this document, we list the installation requirements and installation scripts
   </tr>
   <tr>
     <td align="center">Hunyuan-WorldPlay</td>
-    <td align="center">3.9</td>
+    <td align="center">3.10</td>
     <td align="center">12.1</td>
     <td>PyTorch 2.5.1</td>
-    <td>Pending</td>
+    <td><code>bash scripts/setup/default_install.sh</code></td>
   </tr>
   <tr>
     <td align="center">Astra</td>
@@ -62,7 +62,7 @@ In this document, we list the installation requirements and installation scripts
   </tr>
   <tr>
     <td align="center">LingBot-World</td>
-    <td align="center">3.9</td>
+    <td align="center">3.10</td>
     <td align="center">12.1</td>
     <td>PyTorch 2.5.1</td>
     <td><code>bash scripts/setup/default_install.sh</code></td>
@@ -79,35 +79,35 @@ In this document, we list the installation requirements and installation scripts
   </tr>
   <tr>
     <td align="center">HunyuanWorld-Mirror</td>
-    <td align="center">3.9</td>
+    <td align="center">3.10</td>
     <td align="center">12.1</td>
     <td>PyTorch 2.5.1</td>
-    <td>Pending</td>
+    <td><code>bash scripts/setup/hunyuan_mirror_install.sh</code></td>
   </tr>
   <tr>
     <td align="center">VGGT</td>
-    <td align="center">3.9</td>
+    <td align="center">3.10</td>
     <td align="center">12.1</td>
     <td>PyTorch 2.5.1</td>
     <td><code>bash scripts/setup/default_3D_install.sh</code></td>
   </tr>
   <tr>
     <td align="center">Pi3</td>
-    <td align="center">3.9</td>
+    <td align="center">3.10</td>
     <td align="center">12.1</td>
     <td>PyTorch 2.5.1</td>
-    <td>Pending</td>
+    <td><code>bash scripts/setup/default_3D_install.sh</code></td>
   </tr>
   <tr>
     <td align="center">Pi3X</td>
-    <td align="center">3.9</td>
+    <td align="center">3.10</td>
     <td align="center">12.1</td>
     <td>PyTorch 2.5.1</td>
-    <td>Pending</td>
+    <td><code>bash scripts/setup/default_3D_install.sh</code></td>
   </tr>
   <tr>
     <td align="center">InfiniteVGGT</td>
-    <td align="center">3.9</td>
+    <td align="center">3.10</td>
     <td align="center">12.1</td>
     <td>PyTorch 2.5.1</td>
     <td><code>bash scripts/setup/default_3D_install.sh</code></td>
@@ -117,86 +117,94 @@ In this document, we list the installation requirements and installation scripts
   </tr>
   <tr>
     <td align="center">&pi;0</td>
-    <td align="center">3.9</td>
+    <td align="center">3.10</td>
     <td align="center">12.1</td>
     <td>PyTorch 2.5.1</td>
-    <td>Pending</td>
+    <td><code>bash scripts/setup/default_install.sh</code></td>
   </tr>
   <tr>
     <td align="center">&pi;0.5</td>
-    <td align="center">3.9</td>
+    <td align="center">3.10</td>
     <td align="center">12.1</td>
     <td>PyTorch 2.5.1</td>
-    <td>Pending</td>
+    <td><code>bash scripts/setup/default_install.sh</code></td>
   </tr>
   <tr>
     <td align="center">GigaBrain-0</td>
-    <td align="center">3.9</td>
+    <td align="center">3.10</td>
     <td align="center">12.1</td>
     <td>PyTorch 2.5.1</td>
-    <td>Pending</td>
+    <td><code>bash scripts/setup/default_install.sh</code></td>
   </tr>
   <tr>
     <td align="center">Spirit v1.5</td>
     <td align="center">3.10</td>
     <td align="center">12.1</td>
     <td>PyTorch 2.5.1</td>
-    <td>default_install.sh but need set libero</td>
+    <td><code>bash scripts/setup/default_install.sh 
+    bash scripts/setup/libero_install.sh</code></td>
+  </tr>
+  <tr>
+    <td align="center">Lingbot-va</td>
+    <td align="center">3.10</td>
+    <td align="center">12.1</td>
+    <td>PyTorch 2.5.1</td>
+    <td><code>bash scripts/setup/default_lingbot_va.sh</code></td>
   </tr>
   <tr>
     <td colspan="5" align="center"><b>🎓 Multimodal Reasoning</b></td>
   </tr>
   <tr>
     <td align="center">OmniVinci</td>
-    <td align="center">3.9</td>
+    <td align="center">3.10</td>
     <td align="center">12.1</td>
     <td>PyTorch 2.5.1</td>
-    <td>Pending</td>
+    <td><code>bash scripts/setup/omnivinci_install.sh</code></td>
   </tr>
   <tr>
     <td align="center">Qwen2.5-Omni</td>
-    <td align="center">3.9</td>
+    <td align="center">3.10</td>
     <td align="center">12.1</td>
     <td>PyTorch 2.6.0</td>
     <td><code>bash scripts/setup/default_audio_install.sh</code></td>
   </tr>
   <tr>
     <td align="center">SpatialLadder</td>
-    <td align="center">3.9</td>
+    <td align="center">3.10</td>
     <td align="center">12.1</td>
     <td>PyTorch 2.5.1</td>
-    <td>Pending Need Requirement</td>
+    <td><code>bash scripts/setup/default_install.sh</code></td>
   </tr>
   <tr>
     <td align="center">SpatialReasoner</td>
-    <td align="center">3.9</td>
+    <td align="center">3.10</td>
     <td align="center">12.1</td>
     <td>PyTorch 2.5.1</td>
-    <td>Pending Need Requirement</td>
+    <td><code>bash scripts/setup/default_install.sh</code></td>
   </tr>
   <tr>
     <td colspan="5" align="center"><b>🧩 Interactive Video</b></td>
   </tr>
   <tr>
     <td align="center">Sora 2</td>
-    <td align="center">3.9</td>
+    <td align="center">3.10</td>
     <td align="center"></td>
     <td></td>
-    <td>Pending</td>
+    <td>Only need API</td>
   </tr>
   <tr>
     <td align="center">Veo 3</td>
-    <td align="center">3.9</td>
+    <td align="center">3.10</td>
     <td align="center"></td>
     <td></td>
-    <td>Pending</td>
+    <td>Only need API</td>
   </tr>
   <tr>
     <td align="center">Wan 2.5</td>
-    <td align="center">3.9</td>
+    <td align="center">3.10</td>
     <td align="center"></td>
     <td></td>
-    <td>Pending</td>
+    <td>Only need API</td>
   </tr>
   <tr>
     <td align="center">Wan 2.2</td>
@@ -214,7 +222,7 @@ In this document, we list the installation requirements and installation scripts
   </tr>
   <tr>
     <td align="center">Cosmos-Predict 2.5</td>
-    <td align="center">3.9</td>
+    <td align="center">3.10</td>
     <td align="center">12.1</td>
     <td>PyTorch 2.5.1</td>
     <td><code>bash scripts/setup/default_install.sh</code></td>
@@ -241,17 +249,17 @@ In this document, we list the installation requirements and installation scripts
   </tr>
   <tr>
     <td align="center">MMAudio</td>
-    <td align="center">3.9</td>
+    <td align="center">3.10</td>
     <td align="center">12.1 </td>
     <td> PyTorch 2.6.0</td>
-    <td>Pending</td>
+    <td><code>bash scripts/setup/audio_generation_default_install.sh</code></td>
   </tr>
   <tr>
     <td align="center">ThinkSound</td>
-    <td align="center">3.9</td>
+    <td align="center">3.10</td>
     <td align="center">12.1 </td>
     <td> PyTorch 2.6.0</td>
-    <td>Pending</td>
+    <td><code>bash scripts/setup/audio_generation_default_install.sh</code></td>
   </tr>
 </tbody>
 </table>
