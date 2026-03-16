@@ -1,5 +1,5 @@
 import os
-from openworldlib.pipelines.hunyuan_mirror.pipeline_hunyuan_mirror import HunyuanMirrorPipeline
+from openworldlib.pipelines.hunyuan_world.pipeline_hunyuan_mirror import HunyuanMirrorPipeline
 
 # 设置输入输出路径
 input_path = "data/test_case/test_image_seq_case1"
