@@ -26,10 +26,9 @@ class HunyuanWorldPlayPipeline(PipelineABC):
     def from_pretrained(
         cls,
         *,
-        representation_path: Optional[str] = None,
-        reasoning_path: Optional[str] = None,
-        synthesis_path: Optional[str] = None,
-        transformer_version: str = '480p_i2v',
+        model_path: Optional[str] = None,
+        required_components = {"video_model_path": "tencent/HunyuanVideo-1.5"},
+        mode: str = '480p_i2v',
         device: str = 'cuda',
         create_sr_pipeline: bool = False,
         force_sparse_attn: bool = False,
@@ -37,7 +36,6 @@ class HunyuanWorldPlayPipeline(PipelineABC):
         enable_offloading: bool = None,
         enable_group_offloading: bool = None,
         overlap_group_offloading: bool = True,
-        action_ckpt: Optional[str] = None,
         init_infer_state: bool = True,
         infer_state_kwargs: Optional[dict] = None,
         **kwargs
@@ -46,10 +44,6 @@ class HunyuanWorldPlayPipeline(PipelineABC):
         从预训练模型加载 Pipeline
         
         Args:
-            representation_path: 表示模型路径（可选）
-            reasoning_path: 推理模型路径（可选）
-            synthesis_path: 合成模型路径
-            transformer_version: transformer 版本（如 "480p_i2v"）
             device: 设备
             create_sr_pipeline: 是否创建超分辨率 pipeline
             force_sparse_attn: 是否强制使用稀疏注意力
@@ -57,12 +51,19 @@ class HunyuanWorldPlayPipeline(PipelineABC):
             enable_offloading: 是否启用 offloading
             enable_group_offloading: 是否启用 group offloading
             overlap_group_offloading: 是否重叠 group offloading
-            action_ckpt: action 模型检查点路径
             **kwargs: 其他参数
             
         Returns:
             HunyuanWorldPlayPipeline: Pipeline 实例
         """
+        if model_path is None:
+            model_path = "tencent/HY-WorldPlay"
+        
+        if required_components is not None:
+            synthesis_path = required_components.get("video_model_path", "tencent/HunyuanVideo-1.5")
+        else:
+            synthesis_path = "tencent/HunyuanVideo-1.5"
+
         if init_infer_state:
             default_infer_state_kwargs = {
                 "sage_blocks_range": "0-53",
@@ -78,7 +79,7 @@ class HunyuanWorldPlayPipeline(PipelineABC):
             cls.initialize_infer_state(**default_infer_state_kwargs)
         synthesis_model = HunyuanWorldPlaySynthesis.from_pretrained(
             synthesis_path,
-            transformer_version,
+            mode,
             device=device,
             create_sr_pipeline=create_sr_pipeline,
             force_sparse_attn=force_sparse_attn,
@@ -86,7 +87,7 @@ class HunyuanWorldPlayPipeline(PipelineABC):
             enable_offloading=enable_offloading,
             enable_group_offloading=enable_group_offloading,
             overlap_group_offloading=overlap_group_offloading,
-            action_ckpt=action_ckpt,
+            action_ckpt=model_path,
             **kwargs
         )
         operators = HunyuanWorldPlayOperator()
@@ -146,11 +147,11 @@ class HunyuanWorldPlayPipeline(PipelineABC):
         self,
         *,
         prompt: str,
-        reference_image: Optional[str] = None,
+        image_path: Optional[str] = None,
+        interactions: Optional[str] = None,
+        num_frames: int = 125,
         pose: Optional[str] = None,
-        interaction_signal: Optional[str] = None,
         aspect_ratio: str = '16:9',
-        video_length: int = 125,
         num_inference_steps: int = 4,
         negative_prompt: str = "",
         seed: int = 1,
@@ -171,10 +172,10 @@ class HunyuanWorldPlayPipeline(PipelineABC):
         
         Args:
             prompt: 文本提示
-            reference_image: 参考图像路径
+            image_path: 图像路径
             pose: 相机轨迹（如 "w-10, right-10, d-11"）
             aspect_ratio: 宽高比
-            video_length: 视频长度
+            num_frames: 帧数
             num_inference_steps: 推理步数
             negative_prompt: 负面提示
             seed: 随机种子
@@ -193,15 +194,16 @@ class HunyuanWorldPlayPipeline(PipelineABC):
         Returns:
             HunyuanVideoPipelineOutput: 包含生成的视频帧
         """
-        pose_value = interaction_signal if interaction_signal is not None else pose
+        video_length = num_frames
+        pose_value = interactions if interactions is not None else pose
         if pose_value is None:
-            raise ValueError("pose or interaction_signal must be provided")
+            raise ValueError("pose or interactions must be provided")
         inferred_video_length = self.operators.infer_video_length(pose_value)
         if video_length != inferred_video_length:
             print(f"video_length {video_length} != inferred_video_length {inferred_video_length}, auto setting")
             video_length = inferred_video_length
         processed = self.process(
-            input_=reference_image,
+            input_=image_path,
             interaction=pose_value,
             video_length=video_length,
         )

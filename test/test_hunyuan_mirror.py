@@ -1,11 +1,10 @@
 import os
 from openworldlib.pipelines.hunyuan_world.pipeline_hunyuan_mirror import HunyuanMirrorPipeline
 
-# 设置输入输出路径
-input_path = "data/test_case/test_image_seq_case1"
+# set input and output paths
+input_path = "./data/test_case/test_image_seq_case1"
 output_path = "output/hunyuan_mirror_mirror"
 
-# 获取所有图片文件
 image_extensions = ['.jpg', '.jpeg', '.png', '.webp']
 image_paths = []
 for ext in image_extensions:
@@ -15,20 +14,21 @@ if not image_paths:
     print(f"❌ 目录中没有找到图片文件: {input_path }")
     exit(1)
 
-# 加载模型
+# load model
 pipeline = HunyuanMirrorPipeline.from_pretrained(
     model_path="tencent/HunyuanWorld-Mirror",
     output_path=output_path,
     device="cuda"
 )
 
-# 运行pipeline
+# inference
 processing_results = pipeline(
-    input_paths=image_paths,
+    image_path=image_paths,
+    # the input image_path contains multiple images, may be need another parameter name.
     output_path=output_path
 )
 
-# 保存结果
+# save results
 results = pipeline.save_results(
     results=processing_results,
     save_pointmap=True,

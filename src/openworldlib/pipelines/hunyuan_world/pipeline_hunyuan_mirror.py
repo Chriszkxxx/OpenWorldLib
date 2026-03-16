@@ -443,7 +443,7 @@ class HunyuanMirrorPipeline:
         return save_results
     
     def __call__(self,
-                 input_paths: List[str],
+                 image_path: List[str],
                  output_path: Optional[str] = None,
                  confidence_percentile: float = 10.0,
                  edge_normal_threshold: float = 5.0,
@@ -457,7 +457,7 @@ class HunyuanMirrorPipeline:
         调用接口，支持额外参数
         
         Args:
-            input_paths: 输入图片路径列表
+            image_path: 输入图片路径列表
             output_path: 输出路径（如果提供则覆盖默认路径）
             confidence_percentile: 置信度过滤百分位
             edge_normal_threshold: 法线边缘阈值
@@ -479,7 +479,7 @@ class HunyuanMirrorPipeline:
         
         # 处理图像并返回结果，不进行保存
         return self.process_images(
-            image_paths=input_paths,
+            image_paths=image_path,
             confidence_percentile=confidence_percentile,
             edge_normal_threshold=edge_normal_threshold,
             edge_depth_threshold=edge_depth_threshold,
