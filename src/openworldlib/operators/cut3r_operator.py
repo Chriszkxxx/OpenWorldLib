@@ -16,19 +16,12 @@ class CUT3ROperator(BaseOperator):
         self,
         operation_types=["visual_instruction"],
         interaction_template=[
-            "image_3d", 
-            "video_3d", 
-            "point_cloud", 
-            "depth_map", 
-            "camera_pose",
-            "move_left",
-            "move_right",
-            "move_up",
-            "move_down",
-            "zoom_in",
-            "zoom_out",
-            "rotate_left",
-            "rotate_right"
+            "forward", "backward", "left", "right",
+            "forward_left", "forward_right", "backward_left", "backward_right",
+            "camera_up", "camera_down",
+            "camera_l", "camera_r",
+            "camera_ul", "camera_ur", "camera_dl", "camera_dr",
+            "camera_zoom_in", "camera_zoom_out",
         ]
     ):
         """
@@ -37,14 +30,12 @@ class CUT3ROperator(BaseOperator):
         Args:
             operation_types: List of operation types
             interaction_template: List of valid interaction types
-                - "image_3d": Process single image for 3D reconstruction
-                - "video_3d": Process video for 3D reconstruction
-                - "point_cloud": Generate point cloud output
-                - "depth_map": Generate depth map output
-                - "camera_pose": Estimate camera poses
-                - "move_left/right/up/down": Camera movement controls
-                - "zoom_in/out": Camera zoom controls
-                - "rotate_left/right": Camera rotation controls
+                - Unified 3D camera controls:
+                  forward/backward/left/right, forward_left/forward_right,
+                  backward_left/backward_right,
+                  camera_up/camera_down, camera_l/camera_r,
+                  camera_ul/camera_ur/camera_dl/camera_dr,
+                  camera_zoom_in/camera_zoom_out
         """
         super(CUT3ROperator, self).__init__(operation_types=operation_types)
         self.interaction_template = interaction_template
@@ -198,44 +189,16 @@ class CUT3ROperator(BaseOperator):
             "camera_control": None
         }
         
-        # Data type interactions
-        if latest_interaction == "image_3d":
-            result["data_type"] = "image"
-            result["output_type"] = "all"
-        elif latest_interaction == "video_3d":
-            result["data_type"] = "video"
-            result["output_type"] = "all"
-        elif latest_interaction == "point_cloud":
-            result["data_type"] = "image"
-            result["output_type"] = "point_cloud"
-        elif latest_interaction == "depth_map":
-            result["data_type"] = "image"
-            result["output_type"] = "depth_map"
-        elif latest_interaction == "camera_pose":
-            result["data_type"] = "image"
-            result["output_type"] = "camera_pose"
-        
-        # Camera control interactions
-        elif latest_interaction in ["move_left", "move_right", "move_up", "move_down"]:
-            direction_map = {
-                "move_left": {"x": -0.1, "y": 0, "z": 0},
-                "move_right": {"x": 0.1, "y": 0, "z": 0},
-                "move_up": {"x": 0, "y": 0.1, "z": 0},
-                "move_down": {"x": 0, "y": -0.1, "z": 0},
-            }
-            result["camera_control"] = direction_map[latest_interaction]
-        elif latest_interaction in ["zoom_in", "zoom_out"]:
-            zoom_map = {
-                "zoom_in": {"scale": 1.1},
-                "zoom_out": {"scale": 0.9},
-            }
-            result["camera_control"] = zoom_map[latest_interaction]
-        elif latest_interaction in ["rotate_left", "rotate_right"]:
-            rotation_map = {
-                "rotate_left": {"angle": -10},
-                "rotate_right": {"angle": 10},
-            }
-            result["camera_control"] = rotation_map[latest_interaction]
+        # Camera control interactions (unified 3D schema)
+        if latest_interaction in [
+            "forward", "backward", "left", "right",
+            "forward_left", "forward_right", "backward_left", "backward_right",
+            "camera_up", "camera_down",
+            "camera_l", "camera_r",
+            "camera_ul", "camera_ur", "camera_dl", "camera_dr",
+            "camera_zoom_in", "camera_zoom_out",
+        ]:
+            result["camera_control"] = {"interaction": latest_interaction}
         
         # Add num_frames if provided (for video processing)
         if num_frames is not None:
